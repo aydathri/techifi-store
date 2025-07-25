@@ -1,0 +1,8 @@
+# created by virtualenv automatically
+.env
+*.pyc
+__pycache__/
+*.sqlite3
+.idea/
+staticfiles/
+*.log
