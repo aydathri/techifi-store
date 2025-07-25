@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Techifi Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* استایل‌های قبلی تو اینجا قرار دارن */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background: #0a0f13;
+    }
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .techifi-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 70px;
+      color: #00bfff;
+      text-align: center;
+      padding: 40px 0 20px 0;
+      text-shadow: 0 0 30px #00bfff;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 60px;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 30px;
+      border-bottom: none;
+      box-shadow: none;
+      z-index: 1000;
+    }
+    .header-icons {
+      display: flex;
+      gap: 25px;
+      font-size: 24px;
+    }
+    .header-icons i {
+      cursor: pointer;
+      color: #ffffff;
+      transition: color 0.3s, transform 0.3s;
+    }
+    .header-icons i:hover {
+      color: #00bfff;
+      transform: scale(1.2);
+    }
+    .description {
+      text-align: center;
+      padding: 22px 28px;
+      background-color: rgba(16, 24, 32, 0.9);
+      font-size: 18px;
+      max-width: 900px;
+      margin: 0 auto 35px auto;
+      border-radius: 14px;
+      box-shadow: 0 0 25px #00bfff55;
+      line-height: 1.7;
+    }
+    .description strong {
+      color: #00bfff;
+      font-size: 19px;
+    }
+    .search-area {
+      display: flex;
+      justify-content: center;
+      margin: 80px auto 25px auto;
+      position: relative;
+      width: 350px;
+    }
+    .search-area input {
+      padding: 15px 45px 15px 20px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 15px #00bfff44;
+      outline: none;
+      transition: 0.3s ease-in-out;
+    }
+    .search-area .search-button {
+      background: none;
+      border: none;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #00bfff;
+      font-size: 20px;
+    }
+    .search-area input::placeholder {
+      color: #aaa;
+    }
+    .search-area input:focus {
+      box-shadow: 0 0 20px #00bfff88;
+    }
+    .search-area .search-icon {
+      pointer-events: none;
+    }
+    .search-area.active .search-icon {
+      opacity: 1;
+    }
+    .filters {
+      display: none;
+      text-align: center;
+      margin: 20px;
+    }
+    .filters select {
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      background-color: #1c1c1c;
+      color: #fff;
+    }
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      padding: 30px 50px;
+      transition: opacity 0.3s ease;
+    }
+    /* اضافه شده: کلاس مخفی کننده */
+    .categories.hidden {
+      display: none !important;
+      /* اگر خواستی انیمیشن کم‌رنگ شدن:
+      opacity: 0;
+      pointer-events: none;
+      */
+    }
+    .category {
+      background: rgba(0, 191, 255, 0.10);
+      padding: 20px 15px;
+      border-radius: 20px;
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #00bfff;
+      box-shadow: 0 4px 12px rgba(0, 191, 255, 0.25);
+      transition: all 0.4s ease;
+      user-select: none;
+      backdrop-filter: blur(10px);
+      border: 2px solid transparent;
+    }
+    .category:hover, .category.active {
+      background-color:#00bfff22;
+      color: #e0f7ff;
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 8px 30px rgba(0, 191, 255, 0.75);
+      border-color: #00bfff;
+    }
+    .category i {
+      display: none;
+    }
+    .category div {
+      margin-top: 8px;
+    }
+    .login-prompt {
+      text-align: center;
+      margin: 60px 0;
+    }
+    .login-prompt p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .login-prompt button {
+      padding: 15px 35px;
+      font-size: 18px;
+      background-color: #00bfff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 18px #00bfff;
+      transition: 0.3s ease;
+    }
+    .login-prompt button:hover {
+      background-color: #0099e0;
+    }
+    .bottom-description {
+      max-width: 900px;
+      margin: 40px auto 60px auto;
+      padding: 22px 28px;
+      background-color: rgba(16, 24, 32, 0.9);
+      color: white;
+      font-size: 18px;
+      line-height: 1.7;
+      border-radius: 14px;
+      box-shadow: 0 0 25px #00bfff55;
+      text-align: center;
+    }
+    .bottom-description strong {
+      color: #00bfff;
+      font-size: 19px;
+    }
+    @media (max-width: 768px) {
+      .categories {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 20px 30px;
+        gap: 28px;
+      }
+      .category {
+        font-size: 24px;
+        padding: 25px 15px;
+        border-radius: 18px;
+      }
+    }
+    @media (max-width: 480px) {
+      .categories {
+        grid-template-columns: 1fr;
+        padding: 15px 20px;
+      }
+      .category {
+        font-size: 22px;
+        padding: 20px 10px;
+        border-radius: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="particles-js"></div>
+
+  <div class="techifi-logo">Techifi</div>
+
+<header>
+  <div class="header-icons">
+    {% if request.user.is_authenticated %}
+      <!-- اگر لاگین شده، فقط آیکون تنظیمات -->
+      <a href="{% url 'customer-dashboard' %}" title="Settings" style="color: inherit;">
+        <i class="fas fa-cog"></i>
+      </a>
+    {% else %}
+      <!-- اگر لاگین نشده، آیکون‌های ورود کاربر و ادمین -->
+      <a href="customer-login" title="Login/Sign up" style="color: inherit;">
+        <i class="fas fa-right-to-bracket login-icon"></i>
+      </a>
+      <a href="manager-login" title="Admin Login" style="color: inherit;">
+        <i class="fas fa-user-tie"></i>
+      </a>
+    {% endif %}
+  </div>
+</header>
+
+  <div class="description">
+    <h2 style="color: #00bfff; font-size: 26px; margin-bottom: 15px;">
+      Welcome to Techifi – The Future of Digital Shopping
+    </h2>
+  </div>
+
+  <!-- فرم جستجو -->
+  <form method="GET" action="">
+    <div class="search-area" id="search-area">
+      <input
+        type="text"
+        name="search_query"
+        placeholder="Search for devices"
+        id="search-input"
+        oninput="handleSearchInput()"
+        value="{{ search_query }}"
+      />
+      <button type="submit" class="search-button" aria-label="Search">
+        <i class="fas fa-search search-icon"></i>
+      </button>
+    </div>
+  </form>
+
+  <!-- دسته‌بندی‌ها (داینامیک) -->
+  <div class="categories">
+    {% for category in categories %}
+      <div
+        class="category {% if category.slug == selected_category_title %}active{% endif %}"
+        onclick="filterByCategory('{{ category.title }}')"
+      >
+        <i class="fas fa-tag"></i>
+        <div>{{ category.title }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- نمایش محصولات -->
+  <div style="max-width: 1000px; margin: 40px auto; color: white;">
+  {% if selected_category or search_query %}
+    {% if products.exists %}
+      <h3 style="color:#00bfff; margin-bottom: 20px;">
+        {% if selected_category %}
+          Products in "{{ selected_category }}"
+        {% elif search_query %}
+          Search results for "{{ search_query }}"
+        {% endif %}
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;">
+        {% for product in products %}
+<a href="{% url 'product-detail' %}?title={{ product.title|urlencode }}" style="text-decoration: none; color: inherit;">
+    <div class="product-card" style="background: rgba(20,20,20,0.5); padding: 20px; border-radius: 12px; box-shadow: 0 0 15px #00bfff55; text-align: center;">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.title }}" style="width: 100%; height: 150px; object-fit: contain; border-radius: 10px;" />
+      {% else %}
+        <div style="height:150px; background:#222; border-radius: 10px; line-height: 150px; color:#666;">No Image</div>
+      {% endif %}
+      <h4 style="margin-top: 12px;">{{ product.title }}</h4>
+      <p style="color: #00bfff; font-weight: 700;">${{ product.price }}</p>
+    </div>
+  </a>
+{% endfor %}
+
+      </div>
+    {% else %}
+      <p style="text-align: center; font-size: 18px; margin-top: 40px;">No products found.</p>
+    {% endif %}
+  {% else %}
+
+  {% endif %}
+</div>
+
+
+  <div class="login-prompt">
+    <p style="font-weight: 600; font-size: 20px; color: #00bfff; margin-bottom: 20px;">
+      To unlock the full Techifi experience, please log in to continue shopping.
+    </p>
+    <button
+      style="
+        padding: 16px 40px;
+        font-size: 20px;
+        background: linear-gradient(90deg, #00bfff, #0099e0);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 0 12px #00bfffaa;
+        transition: background 0.3s ease;
+      "
+      onmouseover="this.style.background='linear-gradient(90deg, #0099e0, #0077b3)'"
+      onmouseout="this.style.background='linear-gradient(90deg, #00bfff, #0099e0)'"
+      onclick="location.href='customer-login/'"
+    >
+      Log In to Shop Now
+    </button>
+  </div>
+
+  <div class="bottom-description" id="bottom-description">
+    <p>
+      At <strong>Techifi</strong>, we don’t just sell gadgets — we connect you with the next generation of digital experiences. From powerful laptops and next-gen smartphones to smart accessories and gaming gear, we handpick every product to match the lifestyle of innovators, creators, and tech enthusiasts.
+    </p>
+    <p>
+      With a sleek interface, lightning-fast search, and trusted support, <strong>Techifi</strong> is designed to be more than a store — it's your tech partner. Whether you're a gamer, a digital nomad, a creative professional or just tech-curious, we bring you <em>performance</em>, <em>style</em>, and <em>innovation</em> in every click.
+    </p>
+    <p>
+      Join the digital revolution. Shop smart. Shop <strong>Techifi</strong>.
+    </p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50, density: { enable: true, value_area: 800 } },
+        color: { value: "#00bfff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.4, random: true },
+        size: { value: 3, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#00bfff",
+          opacity: 0.25,
+          width: 1,
+        },
+        move: { enable: true, speed: 1.5 },
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: { onhover: { enable: true, mode: "repulse" } },
+        modes: { repulse: { distance: 100 } },
+      },
+      retina_detect: true,
+    });
+
+    function handleSearchInput() {
+      const input = document.getElementById("search-input");
+      const searchArea = document.getElementById("search-area");
+      if (input.value.trim().length > 0) {
+        searchArea.classList.add("active");
+        showFilters();
+      } else {
+        searchArea.classList.remove("active");
+        document.getElementById("filters").style.display = "none";
+      }
+    }
+
+    function filterByCategory(categoryTitle) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('category', categoryTitle);
+      url.searchParams.delete('search_query');
+      window.location.href = url.toString();
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const category = urlParams.get('category');
+      const searchQuery = urlParams.get('search_query');
+      const categoriesDiv = document.querySelector('.categories');
+
+      if ((category && category.trim() !== '') || (searchQuery && searchQuery.trim() !== '')) {
+        if (categoriesDiv) {
+          categoriesDiv.classList.add('hidden');
+        }
+      } else {
+        if (categoriesDiv) {
+          categoriesDiv.classList.remove('hidden');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

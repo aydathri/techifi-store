@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Orders</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&family=Audiowide&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 2px solid #1f1f1f;
+    }
+
+    .sidebar h2 {
+      color: #0077cc;
+      font-family: 'Audiowide', cursive;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      color: #ddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a:hover {
+      background: #0077cc;
+      color: #fff;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+    }
+
+    .content h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #00aaff;
+    }
+
+    .order-card {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      margin-bottom: 20px;
+    }
+
+    .order-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 15px;
+    }
+
+    .order-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .order-details {
+      flex: 1;
+      position: relative; /* اضافه شده */
+    }
+
+    .order-details h3 {
+      margin: 0 0 5px 0;
+      font-size: 18px;
+      color: #4dcfff;
+    }
+
+    .order-details p {
+      margin: 3px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .order-actions {
+      margin-bottom: -40px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      top: 50px;
+    }
+
+
+
+
+    .btn {
+      padding: 8px 16px;
+      background: #2b2b2b;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .btn:hover {
+      background: #444;
+      border-color: #666;
+    }
+
+    .btn.delete {
+      background: #5c1f1f;
+      border-color: #8a1a1a;
+    }
+
+    .btn.delete:hover {
+      background: #8a1a1a;
+    }
+
+    .btn.pay {
+      background: #1f4d2b;
+      border-color: #28a745;
+    }
+
+    .btn.pay:hover {
+      background: #28a745;
+    }
+
+    .btn.review {
+      background: #1f2d4d;
+      border-color: #3a5ca0;
+      position: absolute; /* اضافه شده */
+      right: 20px;        /* فاصله از راست */
+      top: 50%;           /* وسط عمودی */
+      transform: translateY(-50%);
+      margin-right: 0;    /* حذف فاصله راست اضافی */
+    }
+
+    .btn.review:hover {
+      background: #3a5ca0;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 2px solid #1f1f1f;
+      }
+
+      .sidebar a {
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .order-info {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .order-actions {
+        text-align: left;
+      }
+      .btn.review {
+        position: static; /* برای موبایل دکمه بصورت عادی نمایش داده شود */
+        transform: none;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <h2>Techifi</h2>
+      <a href="{% url 'customer-profile' %}"><i class="fas fa-user"></i> Profile</a>
+      <a href="{% url 'customer-orders' %}"><i class="fas fa-box"></i> Orders</a>
+      <a href="{% url 'customer-review' %}"><i class="fas fa-star"></i> My Reviews</a>
+      <a href="{% url 'customer-logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+      <h1>Your Orders</h1>
+
+      {% for item in order %}
+      <div class="order-card">
+        <div class="order-info">
+          {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" alt="Product Image">
+          {% else %}
+            <img src="{% static 'images/no-image.png' %}" alt="No Image">
+          {% endif %}
+
+          <div class="order-details">
+            {% if not item.order.is_paid %}
+              <div class="order-actions">
+                <form method="POST" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="order_item_id" value="{{ item.id }}">
+                  <button class="btn delete" name="delete_order">
+                    <i class="fas fa-trash-alt"></i> Delete
+                  </button>
+                </form>
+
+                <a href="{% url 'payment_page' item.order.id %}" class="btn pay">
+                  <i class="fas fa-credit-card"></i> Pay Now
+                </a>
+              </div>
+            {% endif %}
+
+            <h3><i class="fas fa-box"></i> {{ item.product.title }}</h3>
+            <p><i class="fas fa-user"></i> Ordered by: <strong>{{ item.order.user.username }}</strong></p>
+            <p><i class="fas fa-sort-numeric-up-alt"></i> Quantity: <strong>{{ item.quantity }}</strong></p>
+            <p><i class="fas fa-money-bill-wave"></i> Total Price: <strong>{{ item.total_price|floatformat:0 }}</strong></p>
+            <p>
+              <i class="fas fa-check-circle"></i> Payment Status:
+              {% if item.order.is_paid %}
+                <span style="color: #4af47b; font-weight: bold;">Paid</span>
+                <a href="{% url 'customer-review' %}" class="btn review">
+                  <i class="fas fa-star"></i> Leave a Review
+                </a>
+              {% else %}
+                <span style="color: #ff4c4c; font-weight: bold;">Pending</span>
+              {% endif %}
+            </p>
+            <p><i class="fas fa-calendar-alt"></i> Order Date: <strong>{{ item.order.created_at|date:"Y/m/d - H:i" }}</strong></p>
+            <p>
+              <i class="fas fa-flag"></i> Status:
+              {% if item.status == 'pending' %}
+                <span style="color: orange; font-weight: bold;">Pending</span>
+              {% elif item.status == 'paid' %}
+                <span style="color: green; font-weight: bold;">Paid</span>
+              {% elif item.status == 'cancelled' %}
+                <span style="color: red; font-weight: bold;">Cancelled</span>
+              {% elif item.status == 'confirmed' %}
+                <span style="color: dodgerblue; font-weight: bold;">Confirmed</span>
+              {% else %}
+                <span style="color: gray;">Unknown</span>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+        <p style="font-size: 18px;">📭 You haven't placed any orders yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

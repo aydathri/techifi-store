@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Customer List</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&family=Audiowide&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .dashboard {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 2px solid #1f1f1f;
+    }
+
+    .sidebar h2 {
+      color: #ff4d4d;
+      font-family: 'Audiowide', cursive;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      color: #ddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a:hover {
+      background: #ff4d4d;
+      color: #fff;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .content h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #ff4d4d;
+    }
+
+    form.search-form {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-form input[type="text"] {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #1c1c1c;
+      color: #fff;
+      width: 250px;
+    }
+
+    .search-form button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #ff4d4d;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .search-form button:hover {
+      background-color: #e63939;
+    }
+
+    .messages {
+      margin-bottom: 20px;
+    }
+
+    .messages .message {
+      padding: 10px 15px;
+      background-color: #ff4d4d;
+      color: white;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #333;
+      text-align: left;
+    }
+
+    th {
+      background-color: #222;
+      color: #ff4d4d;
+      font-weight: bold;
+    }
+
+    tr:hover {
+      background-color: #2a2a2a;
+    }
+
+    img.avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .no-results {
+      margin-top: 20px;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    /* Modal styles */
+    #deleteModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #deleteModal .modal-content {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      color: white;
+    }
+
+    #deleteModal button {
+      margin: 10px 5px 0 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #deleteModal .confirm {
+      background-color: #ff4d4d;
+      color: white;
+    }
+
+    #deleteModal .cancel {
+      background-color: #555;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-bottom: 2px solid #1f1f1f;
+      }
+
+      .sidebar a {
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      table, thead, tbody, th, td, tr {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <h2>Techifi Admin</h2>
+      <a href="{% url 'manager-profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+      <a href="{% url 'manager-show-customer' %}"><i class="fas fa-users"></i> Customers</a>
+      <a href="{% url 'manage-categories' %}"><i class="fas fa-tags"></i> Categories</a>
+      <a href="{% url 'manage-products' %}"><i class="fas fa-box"></i> Products</a>
+      <a href="{% url 'manage-reviews' %}"><i class="fas fa-star-half-alt"></i> Reviews</a>
+      <a href="{% url 'manager-orders' %}"><i class="fas fa-clipboard-list"></i> Orders</a>
+      <a href="{% url 'manager-logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+      <h1>Customer List</h1>
+
+      <form method="get" class="search-form">
+        <input type="text" name="search_query" placeholder="Search by username or phone..." value="{{ search_query }}">
+        <button type="submit"><i class="fas fa-search"></i> Search</button>
+      </form>
+
+      {% if customers %}
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Avatar</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for customer in customers %}
+              <tr>
+                <td>{{ customer.user.id }}</td>
+                <td>{{ customer.user.username }}</td>
+                <td>{{ customer.user.first_name }}</td>
+                <td>{{ customer.user.last_name }}</td>
+                <td>{{ customer.user.email }}</td>
+                <td>{{ customer.user.phone }}</td>
+                <td>{{ customer.user.address }}</td>
+                <td>
+                  {% if customer.user.avatar %}
+                    <img src="{{ customer.user.avatar.url }}" alt="avatar" class="avatar" />
+                  {% else %}
+                    <img src="{% static 'images/default-avatar.png' %}" alt="default" class="avatar" />
+                  {% endif %}
+                </td>
+                <td>
+                  <form method="post" action="{% url 'delete-customer' customer.id %}">
+                    {% csrf_token %}
+                    <button type="button" onclick="showDeleteModal(this.form)" style="padding:5px 10px; background:#ff4d4d; border:none; color:#fff; border-radius:5px; cursor:pointer;">
+                      Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="no-results">No customers found.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal">
+    <div class="modal-content">
+      <p>Are you sure you want to delete this customer?</p>
+      <form id="confirmDeleteForm" method="post">
+        {% csrf_token %}
+        <button type="submit" class="confirm">Yes, Delete</button>
+        <button type="button" class="cancel" onclick="hideDeleteModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let deleteForm = null;
+
+    function showDeleteModal(formElement) {
+      deleteForm = formElement;
+      const modalForm = document.getElementById('confirmDeleteForm');
+      modalForm.action = formElement.action;
+      document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function hideDeleteModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+      deleteForm = null;
+    }
+  </script>
+</body>
+</html>

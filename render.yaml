@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: techifi
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn Techifi.wsgi
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: Techifi.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: techifi.onrender.com

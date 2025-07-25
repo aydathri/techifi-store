@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&family=Audiowide&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .dashboard {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 2px solid #1f1f1f;
+    }
+
+    .sidebar h2 {
+      color: #ff4d4d;
+      font-family: 'Audiowide', cursive;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      color: #ddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a:hover {
+      background: #ff4d4d;
+      color: #fff;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+    }
+
+    .content h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #ff4d4d;
+    }
+
+    .box {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      max-width: 600px;
+    }
+
+    .avatar-container {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      margin: 0 auto 25px auto;
+      overflow: hidden;
+      background: #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .avatar-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .avatar-container.default-avatar::before {
+      content: "No Avatar";
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .remove-avatar-btn {
+      display: block;
+      margin: 10px auto 0;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      background: #ff4d4d;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .remove-avatar-btn:hover {
+      background: #b42a2a;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #2a2a2a;
+      color: #fff;
+    }
+
+    form input[type="file"] {
+      padding: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #ff4d4d;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #cc0000;
+    }
+
+    .messages {
+      margin-bottom: 20px;
+    }
+
+    .messages .success {
+      color: #4af47b;
+    }
+
+    .messages .error {
+      color: #ff4c4c;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 2px solid #1f1f1f;
+      }
+
+      .sidebar a {
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <h2>Techifi Admin</h2>
+      <a href="{% url 'manager-profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+      <a href="{% url 'manager-show-customer' %}"><i class="fas fa-users"></i> Customers</a>
+      <a href="{% url 'manage-categories' %}"><i class="fas fa-tags"></i> Categories</a>
+      <a href="{% url 'manage-products' %}"><i class="fas fa-box"></i> Products</a>
+      <a href="{% url 'manage-reviews' %}"><i class="fas fa-star-half-alt"></i> Reviews</a>
+      <a href="{% url 'manager-orders' %}"><i class="fas fa-clipboard-list"></i> Orders</a>
+      <a href="{% url 'manager-logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+      <h1>Edit Profile</h1>
+
+      <div class="messages">
+        {% if messages %}
+          {% for message in messages %}
+            <p class="{{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="box">
+        <!-- Avatar Display -->
+        <div class="avatar-container {% if not request.user.avatar %}default-avatar{% endif %}">
+          {% if request.user.avatar %}
+            <img src="{{ request.user.avatar.url }}" alt="Avatar">
+          {% else %}
+{#            <img src="{% static 'images/default-avatar.png' %}" alt="No Avatar" />#}
+          {% endif %}
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+{#          {% if request.user.avatar %}#}
+{#            <button type="submit" name="delete_avatar" value="1" class="remove-avatar-btn">Remove Avatar</button>#}
+{#          {% endif %}#}
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,275 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <title>Category management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&family=Audiowide&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .dashboard {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 2px solid #1f1f1f;
+    }
+
+    .sidebar h2 {
+      color: #ff4d4d;
+      font-family: 'Audiowide', cursive;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      color: #ddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a:hover {
+      background: #ff4d4d;
+      color: #fff;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+    }
+
+    .content h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #ff4d4d;
+    }
+
+    .box {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      max-width: 800px;
+    }
+
+    form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #2a2a2a;
+      color: #fff;
+    }
+
+    button {
+      padding: 8px 16px;
+      background: #ff4d4d;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #cc0000;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      padding: 12px;
+      border-bottom: 1px solid #444;
+      text-align: left;
+    }
+
+    table th {
+      color: #ff4d4d;
+    }
+
+    input[type="text"].inline-input {
+      width: auto;
+      background: #2a2a2a;
+      color: white;
+      padding: 5px 10px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+
+    .edit-form, .delete-form {
+      display: inline;
+    }
+
+    .messages .success { color: #4af47b; }
+    .messages .error { color: #ff4c4c; }
+
+    /* Delete Modal Styles */
+    #deleteModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #deleteModal .modal-content {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #444;
+      text-align: center;
+      width: 300px;
+    }
+
+    #deleteModal p {
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    #deleteModal button {
+      margin: 0 10px;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 2px solid #1f1f1f;
+      }
+      .sidebar a { flex: 1; justify-content: center; white-space: nowrap; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+  <div class="sidebar">
+    <h2>Techifi Admin</h2>
+      <a href="{% url 'manager-profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+      <a href="{% url 'manager-show-customer' %}"><i class="fas fa-users"></i> Customers</a>
+      <a href="{% url 'manage-categories' %}"><i class="fas fa-tags"></i> Categories</a>
+      <a href="{% url 'manage-products' %}"><i class="fas fa-box"></i> Products</a>
+      <a href="{% url 'manage-reviews' %}"><i class="fas fa-star-half-alt"></i> Reviews</a>
+      <a href="{% url 'manager-orders' %}"><i class="fas fa-clipboard-list"></i> Orders</a>
+      <a href="{% url 'manager-logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div class="content">
+    <h1>Manage categories</h1>
+
+    <div class="messages">
+      {% if messages %}
+        {% for message in messages %}
+          <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="box">
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.title.label_tag }}
+        {{ form.title }}
+        <button type="submit" name="add_category">Add category</button>
+      </form>
+
+      <table>
+        <thead>
+        <tr>
+          <th>Title</th>
+          <th>Operation</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for cat in categories %}
+          <tr>
+            <td>{{ cat.title }}</td>
+            <td>
+              <form method="POST" class="edit-form">
+                {% csrf_token %}
+                <input type="hidden" name="cat_id" value="{{ cat.id }}">
+                <input type="text" name="title" value="{{ cat.title }}" class="inline-input">
+                <button type="submit" name="edit_category">Edit</button>
+              </form>
+
+              <form method="POST" class="delete-form" id="delete-form-{{ cat.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="cat_id" value="{{ cat.id }}">
+                <input type="hidden" name="delete_category" value="1">
+                <button type="button" onclick="showDeleteModal({{ cat.id }})">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="2">There are no categories available.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal">
+  <div class="modal-content">
+    <p>Are you sure you want to delete this category?</p>
+    <button onclick="confirmDelete()">Yes, Delete</button>
+    <button onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+  let currentDeleteId = null;
+
+  function showDeleteModal(catId) {
+    currentDeleteId = catId;
+    document.getElementById("deleteModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("deleteModal").style.display = "none";
+    currentDeleteId = null;
+  }
+
+  function confirmDelete() {
+    if (currentDeleteId !== null) {
+      document.getElementById(`delete-form-${currentDeleteId}`).submit();
+    }
+  }
+</script>
+
+</body>
+</html>

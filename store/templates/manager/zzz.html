@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Techifi Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background: #0a0f13;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .techifi-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 70px;
+      color: #00bfff;
+      text-align: center;
+      padding: 40px 0 20px 0;
+      text-shadow: 0 0 30px #00bfff;
+    }
+
+    header {
+      position: fixed;       /* ثابت بالا صفحه */
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 60px;          /* ارتفاع دلخواه */
+      background: none;
+      display: flex;
+      align-items: center;   /* وسط چین عمودی */
+      justify-content: flex-end; /* آیکون‌ها سمت راست */
+      padding: 0 30px;       /* فاصله داخلی */
+      border-bottom: none;
+      box-shadow: none;
+      z-index: 1000;         /* بالاتر از بقیه */
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 25px;
+      font-size: 24px;
+    }
+
+    .header-icons i {
+      cursor: pointer;
+      color: #ffffff;
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .header-icons i:hover {
+      color: #00bfff;
+      transform: scale(1.2);
+    }
+
+
+    .icons {
+      display: flex;
+      gap: 25px;
+      font-size: 24px;
+    }
+
+    .icons i {
+      cursor: pointer;
+      color: #ffffff;
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .icons i:hover {
+      color: #00bfff;
+      transform: scale(1.2);
+    }
+
+    .description {
+      text-align: center;
+      padding: 22px 28px;
+      background-color: rgba(16, 24, 32, 0.9);
+      font-size: 18px;
+      max-width: 900px;
+      margin: 0 auto 35px auto;
+      border-radius: 14px;
+      box-shadow: 0 0 25px #00bfff55;
+      line-height: 1.7;
+    }
+
+    .description strong {
+      color: #00bfff;
+      font-size: 19px;
+    }
+
+    /* استایل سرچ */
+    .search-area {
+      display: flex;
+      justify-content: center;
+      margin: 40px auto 25px auto;
+      position: relative;
+      width: 350px;
+    }
+
+    .search-area input {
+      padding: 15px 45px 15px 20px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 15px #00bfff44;
+      outline: none;
+      transition: 0.3s ease-in-out;
+    }
+
+    .search-area input::placeholder {
+      color: #aaa;
+    }
+
+    .search-area input:focus {
+      box-shadow: 0 0 20px #00bfff88;
+    }
+
+    .search-area .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #00bfff;
+      font-size: 20px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .search-area.active .search-icon {
+      opacity: 1;
+    }
+
+    .filters {
+      display: none;
+      text-align: center;
+      margin: 20px;
+    }
+
+    .filters select {
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      background-color: #1c1c1c;
+      color: #fff;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      padding: 30px 50px;
+    }
+
+    .category {
+      background: rgba(20, 20, 20, 0.4);
+      padding: 25px 15px;
+      border-radius: 16px;
+      text-align: center;
+      transition: 0.3s ease;
+      box-shadow: 0 0 12px #00bfff22;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .category:hover {
+      background-color: #00bfff22;
+      transform: translateY(-6px);
+      box-shadow: 0 0 25px #00bfffaa;
+    }
+
+    .category i {
+      font-size: 45px;
+      margin-bottom: 12px;
+      color: #00bfff;
+    }
+
+    .category div {
+      font-size: 17px;
+      margin-top: 5px;
+    }
+
+    .login-prompt {
+      text-align: center;
+      margin: 60px 0;
+    }
+
+    .login-prompt p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .login-prompt button {
+      padding: 15px 35px;
+      font-size: 18px;
+      background-color: #00bfff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 18px #00bfff;
+      transition: 0.3s ease;
+    }
+
+    .login-prompt button:hover {
+      background-color: #0099e0;
+    }
+
+    /* توضیحات پایین صفحه */
+    .bottom-description {
+      max-width: 900px;
+      margin: 40px auto 60px auto;
+      padding: 22px 28px;
+      background-color: rgba(16, 24, 32, 0.9);
+      color: white;
+      font-size: 18px;
+      line-height: 1.7;
+      border-radius: 14px;
+      box-shadow: 0 0 25px #00bfff55;
+      text-align: center;
+    }
+
+    .bottom-description strong {
+      color: #00bfff;
+      font-size: 19px;
+    }
+
+    @media (max-width: 768px) {
+      .categories {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+    .techifi-logo {
+      padding-top: 100px;  /* فاصله کافی برای جای هدر */
+    }
+
+    @media (max-width: 480px) {
+      .categories {
+        grid-template-columns: 1fr;
+      }
+
+      .icons {
+        gap: 15px;
+        font-size: 20px;
+      }
+
+      .search-area {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="particles-js"></div>
+
+  <div class="techifi-logo">Techifi</div>
+
+
+<header>
+  <div class="header-icons">
+    <a href="customer-login" title="Customer Login" style="color: inherit;">
+      <i class="fas fa-right-to-bracket login-icon"></i>
+    </a>
+    <a href="manager-login" title="Admin Login" style="color: inherit;">
+      <i class="fas fa-user-tie"></i>
+    </a>
+  </div>
+</header>
+
+
+
+
+  <div class="description">
+    <h2 style="color: #00bfff; font-size: 26px; margin-bottom: 15px;">
+      Welcome to Techifi – The Future of Digital Shopping
+    </h2>
+  </div>
+
+
+  <div class="search-area" id="search-area">
+    <input
+      type="text"
+      placeholder="Search for devices"
+      id="search-input"
+      oninput="handleSearchInput()"
+    />
+    <i class="fas fa-search search-icon"></i>
+  </div>
+
+  <div class="filters" id="filters">
+    <select>
+      <option>Sort by highest rating</option>
+      <option>Sort by lowest price</option>
+      <option>Sort by highest price</option>
+    </select>
+  </div>
+
+  <div class="categories">
+    <div class="category"><i class="fas fa-laptop"></i><div>Laptop</div></div>
+    <div class="category"><i class="fas fa-tablet-alt"></i><div>iPad</div></div>
+    <div class="category"><i class="fas fa-mobile-alt"></i><div>Phone</div></div>
+    <div class="category"><i class="fas fa-desktop"></i><div>Computer</div></div>
+    <div class="category"><i class="fas fa-tablet"></i><div>Tablet</div></div>
+    <div class="category"><i class="fas fa-clock"></i><div>Smart Watch</div></div>
+    <div class="category"><i class="fas fa-laptop-code"></i><div>Surface</div></div>
+    <div class="category"><i class="fab fa-playstation"></i><div>PS5</div></div>
+    <div class="category"><i class="fas fa-gamepad"></i><div>Game Controllers</div></div>
+    <div class="category"><i class="fas fa-volume-up"></i><div>Speakers</div></div>
+    <div class="category"><i class="fas fa-headphones"></i><div>Headphones</div></div>
+    <div class="category"><i class="fas fa-headset"></i><div>Headsets</div></div>
+    <div class="category"><i class="fas fa-camera"></i><div>Camera</div></div>
+    <div class="category"><i class="fas fa-battery-full"></i><div>Power Bank</div></div>
+    <div class="category"><i class="fas fa-bolt"></i><div>Battery</div></div>
+    <div class="category"><i class="fas fa-usb"></i><div>Flash Drive</div></div>
+    <div class="category"><i class="fas fa-server"></i><div>Computer Case</div></div>
+    <div class="category"><i class="fas fa-mouse"></i><div>Mouse</div></div>
+    <div class="category"><i class="fas fa-keyboard"></i><div>Keyboard</div></div>
+  </div>
+
+<div class="login-prompt">
+  <p style="font-weight: 600; font-size: 20px; color: #00bfff; margin-bottom: 20px;">
+    To unlock the full Techifi experience, please log in to continue shopping.
+  </p>
+  <button
+    style="
+      padding: 16px 40px;
+      font-size: 20px;
+      background: linear-gradient(90deg, #00bfff, #0099e0);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 12px #00bfffaa;
+      transition: background 0.3s ease;
+    "
+    onmouseover="this.style.background='linear-gradient(90deg, #0099e0, #0077b3)'"
+    onmouseout="this.style.background='linear-gradient(90deg, #00bfff, #0099e0)'"
+    onclick="location.href='login.html'"
+  >
+    Log In to Shop Now
+  </button>
+</div>
+
+
+  <div class="bottom-description" id="bottom-description">
+    <p>
+      At <strong>Techifi</strong>, we don’t just sell gadgets — we connect you with the next generation of digital experiences. From powerful laptops and next-gen smartphones to smart accessories and gaming gear, we handpick every product to match the lifestyle of innovators, creators, and tech enthusiasts.
+    </p>
+    <p>
+      With a sleek interface, lightning-fast search, and trusted support, <strong>Techifi</strong> is designed to be more than a store — it's your tech partner. Whether you're a gamer, a digital nomad, a creative professional or just tech-curious, we bring you <em>performance</em>, <em>style</em>, and <em>innovation</em> in every click.
+    </p>
+    <p>
+        Join the digital revolution. Shop smart. Shop <strong>Techifi</strong>.
+    </p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 50, density: { enable: true, value_area: 800 } },
+        color: { value: "#00bfff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.4, random: true },
+        size: { value: 3, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#00bfff",
+          opacity: 0.25,
+          width: 1,
+        },
+        move: { enable: true, speed: 1.5 },
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: { onhover: { enable: true, mode: "repulse" } },
+        modes: { repulse: { distance: 100 } },
+      },
+      retina_detect: true,
+    });
+
+    function showFilters() {
+      document.getElementById("filters").style.display = "block";
+    }
+
+    function handleSearchInput() {
+      const input = document.getElementById("search-input");
+      const searchArea = document.getElementById("search-area");
+      if (input.value.trim().length > 0) {
+        searchArea.classList.add("active");
+        showFilters();
+      } else {
+        searchArea.classList.remove("active");
+        document.getElementById("filters").style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>

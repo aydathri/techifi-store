@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <title>Review Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&family=Audiowide&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .dashboard { display: flex; height: 100vh; }
+    .sidebar {
+      width: 250px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 2px solid #1f1f1f;
+    }
+
+    .sidebar h2 {
+      color: #ff4d4d;
+      font-family: 'Audiowide', cursive;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      color: #ddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a:hover { background: #ff4d4d; color: #fff; }
+
+    .content { flex: 1; padding: 40px; }
+    .content h1 { font-size: 28px; margin-bottom: 20px; color: #ff4d4d; }
+
+    .box {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #333;
+    }
+
+    select, input {
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 6px;
+      padding: 8px;
+      margin-right: 10px;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #444;
+    }
+
+    th { color: #ff4d4d; }
+
+    button {
+      padding: 8px 16px;
+      background: #ff4d4d;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .messages .success { color: #4af47b; }
+    .messages .error { color: #ff4c4c; }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+  <div class="sidebar">
+    <h2>Techifi Admin</h2>
+    <a href="{% url 'manager-profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+    <a href="{% url 'manager-show-customer' %}"><i class="fas fa-users"></i> Customers</a>
+    <a href="{% url 'manage-categories' %}"><i class="fas fa-tags"></i> Categories</a>
+    <a href="{% url 'manage-products' %}"><i class="fas fa-box"></i> Products</a>
+    <a href="{% url 'manage-reviews' %}"><i class="fas fa-star-half-alt"></i> Reviews</a>
+    <a href="{% url 'manager-orders' %}"><i class="fas fa-clipboard-list"></i> Orders</a>
+    <a href="{% url 'manager-logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div class="content">
+    <h1>Manage Reviews</h1>
+
+    <div class="messages">
+      {% if messages %}
+        {% for message in messages %}
+          <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="box">
+      <form method="get">
+        <input type="text" name="search_query" value="{{ search_query }}" placeholder="Search by score">
+        <select name="category">
+          <option value="">All Categories</option>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if cat.id|stringformat:'s' == selected_category %}selected{% endif %}>{{ cat.title }}</option>
+          {% endfor %}
+        </select>
+
+        <select name="product_id">
+          <option value="">All Products</option>
+          {% for prod in products %}
+            <option value="{{ prod.id }}" {% if prod.id|stringformat:'s' == selected_product %}selected{% endif %}>{{ prod.title }}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit">Search</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Description</th>
+            <th>Created At</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rev in reviews %}
+            <tr>
+              <td>{{ rev.user.username }}</td>
+              <td>{{ rev.user.email }}</td>
+              <td>{{ rev.product.title }}</td>
+              <td>{{ rev.product.category.title }}</td>
+              <td>{{ rev.score }}</td>
+              <td>{{ rev.description|default:'---' }}</td>
+              <td>{{ rev.created_at|date:"Y/m/d H:i" }}</td>
+              <td>
+                <form method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="review_id" value="{{ rev.id }}">
+                  <button type="submit" name="delete_review">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="8">No reviews found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,316 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&family=Audiowide&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: radial-gradient(circle at 30% 30%, #0a0f3c, #000);
+      height: 100vh;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    input::-ms-reveal,
+    input::-ms-clear,
+    input::-webkit-credentials-auto-fill-button {
+      display: none !important;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .register-box {
+      position: relative;
+      z-index: 2;
+      max-width: 950px;
+      height: 90vh;
+      margin: 40px auto;
+      display: flex;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(0, 170, 255, 0.2);
+      overflow: hidden;
+    }
+
+    .register-left {
+      width: 40%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      gap: 25px;
+      color: #00c8ff;
+    }
+
+    .site-title {
+      font-family: 'Audiowide', cursive;
+      font-size: 38px;
+      color: #00c8ff;
+      text-shadow: 0 0 10px #00c8ff, 0 0 20px #007eff;
+      letter-spacing: 2px;
+    }
+
+    .tech-icons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .tech-icons i {
+      font-size: 38px;
+      color: #cdeeff;
+      transition: transform 0.4s ease;
+    }
+
+    .tech-icons i:hover {
+      color: #00c8ff;
+      transform: scale(1.3);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .register-right {
+      width: 60%;
+      padding: 40px 30px;
+      overflow-y: auto;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #00b2ff;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #00b2ff;
+      box-shadow: 0 0 5px rgba(0, 126, 255, 0.5);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #888;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .toggle-password:hover {
+      color: #00b2ff;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007eff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #005bbd;
+    }
+
+    .errorlist {
+  margin: -10px 0 10px;
+  padding: 6px 12px;
+  background-color: rgba(255, 68, 68, 0.08);
+  border-left: 4px solid #ff4c4c;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #ff4c4c;
+  list-style: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.errorlist li::before {
+  content: "⚠ ";
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+
+    .messages {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .messages .success { color: #22bb77; }
+    .messages .error { color: #ff4444; }
+
+    @media screen and (max-width: 768px) {
+      .register-box { flex-direction: column; height: auto; }
+      .register-left, .register-right { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="particles-js"></div>
+
+  <div class="register-box">
+    <div class="register-left">
+      <div class="site-title">Techifi</div>
+      <div class="tech-icons">
+        <i class="fas fa-laptop"></i>
+        <i class="fas fa-camera-retro"></i>
+        <i class="fas fa-mobile-alt"></i>
+        <i class="fas fa-headphones-alt"></i>
+        <i class="fas fa-keyboard"></i>
+      </div>
+    </div>
+
+    <div class="register-right">
+      <h2>Sign Up</h2>
+
+      <div class="messages">
+        {% if messages %}
+          {% for m in messages %}
+            <p class="{{ m.tags }}">{{ m }}</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% if field.name == 'password1' or field.name == 'password2' %}
+            <div class="password-wrapper">
+              {{ field }}
+              <i class="fas fa-eye toggle-password" onclick="togglePassword('{{ field.auto_id }}', this)"></i>
+            </div>
+          {% else %}
+            {{ field }}
+          {% endif %}
+
+          {% if field.errors %}
+            <ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
+        {% endfor %}
+
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 60, density: { enable: true, value_area: 800 } },
+      color: { value: "#00c8ff" },
+      shape: { type: "circle" },
+      opacity: { value: 0.4, random: true },
+      size: { value: 3, random: true },
+      line_linked: {
+        enable: true,
+        distance: 150,
+        color: "#00c8ff",
+        opacity: 0.25,
+        width: 1
+      },
+      move: { enable: true, speed: 2 }
+    },
+    interactivity: {
+      detect_on: "canvas",
+      events: {
+        onhover: {
+          enable: true,
+          mode: "repulse" // فقط حالت repulse مثل صفحه ثبت‌نام
+        },
+        resize: true
+      },
+      modes: {
+        repulse: {
+          distance: 100
+        }
+      }
+    },
+    retina_detect: true
+  });
+
+  function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+    }
+  }
+
+  setTimeout(() => {
+    document.querySelectorAll(".errorlist, .messages").forEach(el => {
+      el.style.transition = "opacity 1s ease-out";
+      el.style.opacity = 0;
+      setTimeout(() => el.remove(), 1000);
+    });
+  }, 5000);
+</script>
+
+</body>
+</html>

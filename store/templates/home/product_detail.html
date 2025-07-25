@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ product.title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #000000 0%, #001122 100%);
+      color: #c0c8e4;
+      font-family: 'Nunito', sans-serif;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      gap: 30px;
+      width: 100%;
+      max-width: 1200px;
+      align-items: flex-start;
+    }
+    .product-box, .review-box {
+      background-color: rgba(24, 23, 23, 0.83);
+      border-radius: 14px;
+      padding: 25px;
+      color: #ffffff;
+    }
+    .product-box {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .review-box {
+      flex: 1;
+    }
+    .product-image {
+      width: 100%;
+      max-height: 400px;
+      overflow: hidden;
+      border-radius: 12px;
+      background-color: #1a1d23;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .product-image img {
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .product-title {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .product-description {
+      font-size: 16px;
+      color: #eeeeee;
+      line-height: 1.5;
+      min-height: 90px;
+    }
+    .product-price {
+      font-size: 24px;
+      font-weight: 700;
+      color: #dddddd;
+    }
+    .product-status {
+      font-weight: 700;
+      font-size: 18px;
+      color: #00ff99;
+    }
+    .product-status.unavailable {
+      color: #ff6666;
+    }
+    .add-cart {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    input[type="number"] {
+      width: 40px;
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      text-align: center;
+      background-color: #555555;
+      color: #ffffff;
+      pointer-events: none;
+    }
+    button {
+      padding: 10px 18px;
+      background-color: #555555;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover:not(:disabled) {
+      background-color: #444444;
+    }
+    button:disabled {
+      background-color: #333333;
+      cursor: not-allowed;
+    }
+    .message {
+      color: #ff5555;
+      font-weight: 600;
+      display: none;
+    }
+
+    .review-box h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 22px;
+      text-align: center;
+    }
+    .review {
+      border-bottom: 1px solid #555555;
+      margin-bottom: 15px;
+      padding-bottom: 12px;
+    }
+    .review:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .review h4 {
+      margin: 0 0 6px 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .stars {
+      color: gold;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+    .stars i {
+      margin-right: 3px;
+    }
+    .review p {
+      font-style: italic;
+      color: #dddddd;
+      margin: 0 0 5px 0;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Product Info -->
+    <div class="product-box">
+      <div class="product-image">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.title }}" />
+        {% else %}
+          <div style="color:#aaa; font-size:18px; padding: 80px 0; text-align:center;">No Image Available</div>
+        {% endif %}
+      </div>
+
+      <div class="product-title">{{ product.title }}</div>
+      <div class="product-description">{{ product.description }}</div>
+      <div class="product-price">${{ product.price }}</div>
+      <div class="product-status {% if not product.is_active %}unavailable{% endif %}">
+        {% if product.is_active %}
+          Available
+        {% else %}
+          Unavailable
+        {% endif %}
+      </div>
+
+      <form action="{% url 'order-registration' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <div class="add-cart">
+          <button type="button" id="decreaseQty">-</button>
+          <input type="number" id="quantity" name="quantity" value="1" min="1" max="5" readonly />
+          <button type="button" id="increaseQty">+</button>
+          <button type="submit">Place Order</button>
+        </div>
+        <div class="message" id="loginMessage">You need to login first.</div>
+      </form>
+    </div>
+
+    <!-- Review Box -->
+    <div class="review-box">
+      <h3>Product Reviews</h3>
+      {% if reviews %}
+        {% for review in reviews %}
+          <div class="review">
+            <h4>{{ review.user.first_name }} {{ review.user.last_name }}</h4>
+            <div class="stars">
+              {% for i in "12345" %}
+                {% if forloop.counter <= review.score %}
+                  <i class="fas fa-star"></i>
+                {% else %}
+                  <i class="far fa-star"></i>
+                {% endif %}
+              {% endfor %}
+            </div>
+            {% if review.description %}
+              <p>{{ review.description }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align:center; color:#888;">No reviews yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      const maxQty = 5;
+      const $quantity = $('#quantity');
+      const $incBtn = $('#increaseQty');
+      const $decBtn = $('#decreaseQty');
+
+      function updateButtons() {
+        let val = parseInt($quantity.val());
+        $incBtn.prop('disabled', val >= maxQty);
+        $decBtn.prop('disabled', val <= 1);
+      }
+
+      $incBtn.click(function() {
+        let val = parseInt($quantity.val());
+        if (val < maxQty) {
+          $quantity.val(val + 1);
+          updateButtons();
+        }
+      });
+
+      $decBtn.click(function() {
+        let val = parseInt($quantity.val());
+        if (val > 1) {
+          $quantity.val(val - 1);
+          updateButtons();
+        }
+      });
+
+      updateButtons();
+    });
+  </script>
+</body>
+</html>

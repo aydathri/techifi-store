@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm Payment</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .payment-box {
+      background: #1c1c1c;
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .payment-box h2 {
+      color: #00aaff;
+      margin-bottom: 20px;
+    }
+
+    .payment-box p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .payment-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    .payment-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-box">
+    <h2><i class="fas fa-credit-card"></i> Confirm Payment</h2>
+    <p>You're about to pay for <strong>Order #{{ order.id }}</strong>.</p>
+    <p>Amount: <strong>${{ order.product.price }}</strong></p>
+    <a href="{% url 'simulate_payment_page' order.id %}">
+      <button class="payment-btn"><i class="fas fa-money-check-alt"></i> Continue to Payment</button>
+    </a>
+  </div>
+</body>
+</html>

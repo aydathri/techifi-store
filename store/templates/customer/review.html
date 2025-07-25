@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Reviews</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&family=Audiowide&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 2px solid #1f1f1f;
+    }
+
+    .sidebar h2 {
+      color: #0077cc;
+      font-family: 'Audiowide', cursive;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      color: #ddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a:hover {
+      background: #0077cc;
+      color: #fff;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+    }
+
+    .content h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #00aaff;
+    }
+
+    .messages {
+      margin-bottom: 20px;
+    }
+
+    .messages .success { color: #4af47b; }
+    .messages .error { color: #ff4c4c; }
+
+    .box {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      margin-bottom: 40px;
+    }
+
+    .product-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00aaff;
+      margin-bottom: 10px;
+    }
+
+    .review-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .review-form label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .review-form select,
+    .review-form textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #2a2a2a;
+      color: #fff;
+    }
+
+    .review-form button {
+      align-self: flex-end;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #0077cc;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .review-form button:hover {
+      background: #005fa3;
+    }
+
+    .existing-review {
+      color: #ccc;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 2px solid #1f1f1f;
+      }
+      .sidebar a {
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
+      }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+  <div class="sidebar">
+    <h2>Techifi</h2>
+    <a href="{% url 'customer-profile' %}"><i class="fas fa-user"></i> Profile</a>
+    <a href="{% url 'customer-orders' %}"><i class="fas fa-box"></i> Orders</a>
+    <a href="{% url 'customer-review' %}"><i class="fas fa-star"></i> My Reviews</a>
+    <a href="{% url 'customer-logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div class="content">
+    <h1>Review Purchased Products</h1>
+
+    <div class="messages">
+      {% if messages %}
+        {% for message in messages %}
+          <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% for product in unreviewed_products %}
+      <div class="box">
+        <p class="product-title">{{ product.title }}</p>
+        <form method="post" class="review-form">
+          {% csrf_token %}
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+
+          <label for="score">Rating (1 to 5):</label>
+          <select name="score" required>
+            <option value="">-- Select --</option>
+            {% for value, label in form.fields.score.choices %}
+              <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="description">Comment (optional):</label>
+          <textarea name="description" rows="3" placeholder="Write your thoughts..."></textarea>
+
+          <button type="submit">Submit Review</button>
+        </form>
+      </div>
+    {% endfor %}
+
+    {% if reviewed_products %}
+      <h2 style="margin-top: 50px; color: #4af47b;">Reviewed Products</h2>
+      {% for product in reviewed_products %}
+        <div class="box">
+          <p class="product-title">{{ product.title }}</p>
+          {% for review in product.reviews.all %}
+            {% if review.user == request.user %}
+              <p class="existing-review">⭐ Rating: {{ review.score }}</p>
+              {% if review.description %}
+                <p class="existing-review">💬 {{ review.description }}</p>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>

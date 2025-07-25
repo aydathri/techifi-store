@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Customer Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background: #0d1117;
+      color: #fff;
+    }
+
+    .dashboard {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #0a0a0a;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-right: 2px solid #1f1f1f;
+    }
+
+    .sidebar h2 {
+      color: #00bfff;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a:hover {
+      background: #00bfff;
+      color: #fff;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+      background: #161b22;
+    }
+
+    .content h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: #00bfff;
+    }
+
+    .box {
+      background: #1c1c1c;
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      color: #ccc;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 2px solid #1f1f1f;
+      }
+
+      .sidebar a {
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <h2>My Account</h2>
+      <a href="{% url 'customer-profile' %}"><i class="fas fa-user"></i> Profile</a>
+      <a href="{% url 'customer-orders' %}"><i class="fas fa-box"></i> My Orders</a>
+      <a href="{% url 'customer-review' %}"><i class="fas fa-star"></i> My Reviews</a>
+      <a href="{% url 'customer-logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+      <h1>Welcome back, {{ request.user.first_name }}!</h1>
+      <div class="box">
+        <p>This is your personal dashboard. From here, you can manage your orders, reviews, profile, and more.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
