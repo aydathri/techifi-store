@@ -10,11 +10,7 @@ from store.views.manager_view import (ManagerSingUpView, ManagerVerifyTokenView,
                                       ManagerResetPasswordView, ManagerDashboarView, ManagerEditProfileView,
                                       ManagerShowCustomersView, ManagerCustomerDelete, CategoryView,
                                       ProductView, ReviewView, OrderView, LogoutView)
-from .view import test_email
 urlpatterns = [
-    path('test-email/', test_email, name='test-email'),
-
-
     path('', GlobalHome, name='global-home'),
     path('product-detail', ProductDtailView, name='product-detail'),
 
